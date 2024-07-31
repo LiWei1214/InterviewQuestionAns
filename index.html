@@ -94,9 +94,9 @@
 
                 // Process and create Table 2
                 const processedData = [
-                    { Category: 'Alpha', Value: (search(data, 'A5') + search(data, 'A20')).toFixed(2) },
-                    { Category: 'Beta', Value: (search(data, 'A15') / search(data, 'A7')).toFixed(2) },
-                    { Category: 'Charlie', Value: (search(data, 'A13') * search(data, 'A12')).toFixed(2) }
+                    { Category: 'Alpha', Value: (search(data, 'A5') + search(data, 'A20'))},
+                    { Category: 'Beta', Value: (search(data, 'A15') / search(data, 'A7'))},
+                    { Category: 'Charlie', Value: (search(data, 'A13') * search(data, 'A12'))}
                 ];
                 
                 createTable(processedData, 'table2');   
