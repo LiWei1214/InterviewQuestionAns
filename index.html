@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSV Data Display</title>
+    <style>
+        table {
+            width: 50%;
+            margin: 20px auto;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+        th {
+            background-color: #f2f2f2;
+            text-align: center;
+        }
+        td {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h2 style="text-align: center;">Table 1</h2>
+    <div id="table1"></div>
+
+    <h2 style="text-align: center;">Table 2</h2>
+    <div id="table2"></div>
+
+    <script>
+        function parseCSV(csvText) {
+            const lines = csvText.trim().split('\n');
+            const headers = lines[0].split(',');
+            const result = [];
+
+            for (let i = 1; i < lines.length; i++) {
+                const obj = {};
+                const currentline = lines[i].split(',');
+
+                for (let j = 0; j < headers.length; j++) {
+                    obj[headers[j].trim()] = currentline[j].trim();
+                }
+
+                result.push(obj);
+            }
+            return result;
+        }
+
+        function createTable(data, containerId) {
+            const table = document.createElement('table');
+            const thead = document.createElement('thead');
+            const tbody = document.createElement('tbody');
+            
+            const headers = Object.keys(data[0]);
+            const tr = document.createElement('tr');
+            headers.forEach(header => {
+                const th = document.createElement('th');
+                th.textContent = header;
+                tr.appendChild(th);
+            });
+            thead.appendChild(tr);
+            table.appendChild(thead);
+
+            data.forEach(item => {
+                const tr = document.createElement('tr');
+                headers.forEach(header => {
+                    const td = document.createElement('td');
+                    td.textContent = item[header];
+                    tr.appendChild(td);
+                });
+                tbody.appendChild(tr);
+            });
+            table.appendChild(tbody);
+
+            document.getElementById(containerId).appendChild(table);
+        }
+        
+        function search(data, IndexToSearch){
+            const row = data.find(row => row['Index #'] === IndexToSearch);
+            return row ? parseFloat(row['Value']): 0;
+        }
+
+        // Fetch the CSV file and create tables
+        fetch('Table_Input.csv')
+            .then(response => response.text())
+            .then(csvText => {
+                const data = parseCSV(csvText);
+
+                // Create Table 1
+                createTable(data, 'table1');
+
+                // Process and create Table 2
+                const processedData = [
+                    { Category: 'Alpha', Value: (search(data, 'A5') + search(data, 'A20')).toFixed(2) },
+                    { Category: 'Beta', Value: (search(data, 'A15') / search(data, 'A7')).toFixed(2) },
+                    { Category: 'Charlie', Value: (search(data, 'A13') * search(data, 'A12')).toFixed(2) }
+                ];
+                
+                createTable(processedData, 'table2');   
+            })
+            .catch(error => console.error('Error fetching the CSV file:', error));
+    </script>
+</body>
+</html>
